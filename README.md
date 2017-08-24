@@ -1,4 +1,4 @@
 # ods2csv
-Go package to read .ods file. See example for usage
+This is a Go package to read content of .ods (openoffice spreadsheet) file. See example for usage.
 
 Note: Merged cells are not support
