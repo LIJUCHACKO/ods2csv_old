@@ -26,7 +26,7 @@ import (
 
 type Cell struct {
 	Type    string //Type float,string ...    ( office:value-type= )
-	Value   string //Value/Formula            ( office:value= )
+	Value   string //Value                    ( office:value= )
 	Formula string //formula 		  (table:formula= )
 	Text    string //Text
 
