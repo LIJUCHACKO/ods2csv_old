@@ -1,4 +1,4 @@
-// Version-: 11-09-2017
+// Version-: 12-09-2017
 
 //////////////////////////////////////contents.xml format/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //<office:spreadsheet>                                                                          							                //
@@ -161,9 +161,15 @@ func ReadODSFile(odsfilename string) (Odsfile, error) {
 			textspanstartlen := len(textspanstart)
 			textspanparaflag := false
 			textspanstarted := false
-
 			textspanend := "</text:span>"
 			textspanendlen := len(textspanend)
+			
+			annotationstart:="<office:annotation"
+			annotationstartlen:=len(annotationstart)
+			annotationend:="</office:annotation>"
+			annotationendlen:=len(annotationend)
+			annotationstarted:=false		
+			annotation_paraflag:=false
 
 			para_start := "<text:p"
 			parastartlen := len(para_start)
@@ -273,7 +279,8 @@ func ReadODSFile(odsfilename string) (Odsfile, error) {
 								if xmlline[i:i+1] == ">" {
 									cellparaflag = false
 								}
-								if (xmlline[i:i+cellendlen] == cell_end || (cellparaflag && xmlline[i:i+2] == "/>")) && !para_started {
+								
+								if (xmlline[i:i+cellendlen] == cell_end || (cellparaflag && xmlline[i:i+2] == "/>")) && !para_started && !annotationstarted {
 									cell_started = false
 									cellparaflag = false
 									if len(celltext) > 0 {
@@ -295,6 +302,22 @@ func ReadODSFile(odsfilename string) (Odsfile, error) {
 									}
 									column_repeatvalue = 1
 								}
+								if annotationstarted {
+									if xmlline[i:i+1] == ">" && annotation_paraflag {
+										annotation_paraflag = false
+									}
+									if xmlline[i:i+annotationendlen] == annotationend || (annotation_paraflag && xmlline[i:i+2] == "/>") {
+										annotationstarted=false
+										annotation_paraflag=false
+									}
+
+								} else {
+								 	if detectstart(xmlline[i:i+annotationstartlen+2], annotationstart, annotationstartlen) {
+										annotationstarted = true
+										annotation_paraflag=true
+									}
+								}
+
 								if para_started {
 									if xmlline[i:i+1] == ">" && para_paraflag {
 										para_paraflag = false
@@ -381,7 +404,7 @@ func ReadODSFile(odsfilename string) (Odsfile, error) {
 										}
 									}
 								} else {
-									if detectstart(xmlline[i:i+parastartlen+2], para_start, parastartlen) {
+									if detectstart(xmlline[i:i+parastartlen+2], para_start, parastartlen) && !annotationstarted {
 										para_started = true
 										para_paraflag = true
 										parastarti = i + parastartlen
