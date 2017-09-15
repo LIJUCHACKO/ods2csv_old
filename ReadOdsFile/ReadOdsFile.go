@@ -1,4 +1,4 @@
-// Version-: 12-09-2017
+// Version-: 15-09-2017
 
 //////////////////////////////////////contents.xml format/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //<office:spreadsheet>                                                                          							                //
@@ -283,7 +283,7 @@ func ReadODSFile(odsfilename string) (Odsfile, error) {
 								if (xmlline[i:i+cellendlen] == cell_end || (cellparaflag && xmlline[i:i+2] == "/>")) && !para_started && !annotationstarted {
 									cell_started = false
 									cellparaflag = false
-									if len(celltext) > 0 {
+									if len(celltext) > 0 || len(cellvalue)>0 || len(cellformula)>0 {
 										for i := 0; i < blankcells; i++ {
 											CellContents = append(CellContents, Cell{"", "", "", ""})
 											Cellno = Cellno + 1
