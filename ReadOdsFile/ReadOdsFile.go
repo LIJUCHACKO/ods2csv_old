@@ -28,7 +28,7 @@ import (
 type Cell struct {
 	Type      string //Type float,string ...    ( office:value-type= )
 	Value     string //Value                    ( office:value= )
-	DateValue string //Value                    ( office:date-value= )
+	DateValue string //DateValue                ( office:date-value= )
 	Formula   string //formula                  (table:formula= )
 	Text      string //Text
 
