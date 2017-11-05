@@ -1,20 +1,20 @@
 // Version-: 15-09-2017
 
-//////////////////////////////////////contents.xml format/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//<office:spreadsheet>                                                                          							                //
-//                                                                                                           								//
-// <table:table table:name="name" table:style-name="ta1">                                                                                                     		//
-//                                                                                                          								//
-//      <table:table-row table:number-rows-repeated="2" table:style-name="ro1">                              								//
-//                                                                                                           								//
-//      <table:table-cell table:formula="of:=3*[.B2]"  table:number-columns-repeated="2" table:style-name="ce1" office:value-type="string" calcext:value-type="string"> //
-//      <text:p>SrNo<text:span text:style-name="T1">gj</text:span><text:s text:c="10"/><text:s text:c="10"/>gh</text:p>                                                 //
-//      </table:table-cell>                                                                                  								//
-//                                                                                                                                                  			//
-// </table:table-row>                                                                                        								//
-//                                                                                                           								//
-// </office:spreadsheet>                                                                                     								//
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////contents.xml format///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//<office:spreadsheet>                                                                          							                                      //
+//                                                                                                           								                      //
+// <table:table table:name="name" table:style-name="ta1">                                                                                                     		                      //
+//                                                                                                          								                      //
+//      <table:table-row table:number-rows-repeated="2" table:style-name="ro1">                              								                      //
+//                                                                                                           								                      //
+//      <table:table-cell table:formula="of:=3*[.B2]"  table:number-columns-repeated="2" table:style-name="ce1" office:value-type="string" calcext:value-type="string" office:date-value="" > //
+//      <text:p>SrNo<text:span text:style-name="T1">gj</text:span><text:s text:c="10"/><text:s text:c="10"/>gh</text:p>                                                                       //
+//      </table:table-cell>                                                                                  								                      //
+//                                                                                                                                                  			                      //
+// </table:table-row>                                                                                        								                      //
+//                                                                                                           								                      //
+// </office:spreadsheet>                                                                                     								                      //
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 package ods
 
@@ -508,6 +508,7 @@ func ReadODSFile(odsfilename string) (Odsfile, error) {
 									celltext = ""
 									celltype = ""
 									cellvalue = ""
+									celldatevalue = ""
 									cellformula = ""
 
 								}
@@ -532,6 +533,7 @@ func ReadODSFile(odsfilename string) (Odsfile, error) {
 							row_started = false
 							firstrow = Rowno
 							cell_started = false
+							cellvalueparaflag = false
 							cellvalueparaflag = false
 							celltypeparaflag = false
 							column_repeatvalue = 1
