@@ -26,10 +26,11 @@ import (
 )
 
 type Cell struct {
-	Type    string //Type float,string ...    ( office:value-type= )
-	Value   string //Value                    ( office:value= )
-	Formula string //formula                  (table:formula= )
-	Text    string //Text
+	Type      string //Type float,string ...    ( office:value-type= )
+	Value     string //Value                    ( office:value= )
+	DateValue string //DateValue                ( office:date-value= )
+	Formula   string //formula                  (table:formula= )
+	Text      string //Text
 
 }
 
@@ -96,6 +97,7 @@ func ReadODSFile(odsfilename string) (Odsfile, error) {
 	CellContents := []Cell{}
 	var celltext string
 	var cellvalue string
+	var celldatevalue string
 	var celltype string
 	var cellformula string
 	RowContents := []Row{}
@@ -153,6 +155,10 @@ func ReadODSFile(odsfilename string) (Odsfile, error) {
 			cellvalueparalen := len(cellvaluepara)
 			cellvalueparaflag := false
 
+			celldatevaluepara := "office:date-value=\""
+			celldatevalueparalen := len(celldatevaluepara)
+			celldatevalueparaflag := false
+
 			cellformulapara := "table:formula=\""
 			cellformulaparalen := len(cellformulapara)
 			cellformulaparaflag := false
@@ -163,13 +169,13 @@ func ReadODSFile(odsfilename string) (Odsfile, error) {
 			textspanstarted := false
 			textspanend := "</text:span>"
 			textspanendlen := len(textspanend)
-			
-			annotationstart:="<office:annotation"
-			annotationstartlen:=len(annotationstart)
-			annotationend:="</office:annotation>"
-			annotationendlen:=len(annotationend)
-			annotationstarted:=false		
-			annotation_paraflag:=false
+
+			annotationstart := "<office:annotation"
+			annotationstartlen := len(annotationstart)
+			annotationend := "</office:annotation>"
+			annotationendlen := len(annotationend)
+			annotationstarted := false
+			annotation_paraflag := false
 
 			para_start := "<text:p"
 			parastartlen := len(para_start)
@@ -197,7 +203,7 @@ func ReadODSFile(odsfilename string) (Odsfile, error) {
 			tableparaflag := false
 			blankcells := 0
 			blankrows := 0
-			blankcell := Cell{"", "", "", ""}
+			blankcell := Cell{"", "", "", "", ""}
 			blankrow := []Cell{}
 			blankrow = append(blankrow, blankcell)
 			for i := 0; i < len(xmlline); i++ {
@@ -279,13 +285,13 @@ func ReadODSFile(odsfilename string) (Odsfile, error) {
 								if xmlline[i:i+1] == ">" {
 									cellparaflag = false
 								}
-								
+
 								if (xmlline[i:i+cellendlen] == cell_end || (cellparaflag && xmlline[i:i+2] == "/>")) && !para_started && !annotationstarted {
 									cell_started = false
 									cellparaflag = false
-									if len(celltext) > 0 || len(cellvalue)>0 || len(cellformula)>0 {
+									if len(celltext) > 0 || len(cellvalue) > 0 || len(celldatevalue) > 0 || len(cellformula) > 0 {
 										for i := 0; i < blankcells; i++ {
-											CellContents = append(CellContents, Cell{"", "", "", ""})
+											CellContents = append(CellContents, Cell{"", "", "", "", ""})
 											Cellno = Cellno + 1
 										}
 										for i := 0; i < column_repeatvalue; i++ {
@@ -293,7 +299,7 @@ func ReadODSFile(odsfilename string) (Odsfile, error) {
 											celltext = ReplaceHTMLSpecialEntities(celltext)
 											cellvalue = ReplaceHTMLSpecialEntities(cellvalue)
 											///////////////////////////////////////////////////////////////////////////////
-											CellContents = append(CellContents, Cell{celltype, cellvalue, cellformula, celltext})
+											CellContents = append(CellContents, Cell{celltype, cellvalue, celldatevalue, cellformula, celltext})
 											Cellno = Cellno + 1
 										}
 										blankcells = 0
@@ -307,14 +313,14 @@ func ReadODSFile(odsfilename string) (Odsfile, error) {
 										annotation_paraflag = false
 									}
 									if xmlline[i:i+annotationendlen] == annotationend || (annotation_paraflag && xmlline[i:i+2] == "/>") {
-										annotationstarted=false
-										annotation_paraflag=false
+										annotationstarted = false
+										annotation_paraflag = false
 									}
 
 								} else {
-								 	if detectstart(xmlline[i:i+annotationstartlen+2], annotationstart, annotationstartlen) {
+									if detectstart(xmlline[i:i+annotationstartlen+2], annotationstart, annotationstartlen) {
 										annotationstarted = true
-										annotation_paraflag=true
+										annotation_paraflag = true
 									}
 								}
 
@@ -474,6 +480,21 @@ func ReadODSFile(odsfilename string) (Odsfile, error) {
 									if xmlline[i:i+cellvalueparalen] == cellvaluepara && cellparaflag {
 										cellvalueparaflag = true
 										parastarti = i + cellvalueparalen
+
+									}
+								}
+
+								if celldatevalueparaflag {
+									if xmlline[i:i+1] == "\"" {
+										if parastarti < i {
+											celldatevalueparaflag = false
+											celldatevalue = xmlline[parastarti:i]
+										}
+									}
+								} else {
+									if xmlline[i:i+celldatevalueparalen] == celldatevaluepara && cellparaflag {
+										celldatevalueparaflag = true
+										parastarti = i + celldatevalueparalen
 
 									}
 								}
