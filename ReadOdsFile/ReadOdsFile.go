@@ -534,7 +534,7 @@ func ReadODSFile(odsfilename string) (Odsfile, error) {
 							firstrow = Rowno
 							cell_started = false
 							cellvalueparaflag = false
-							cellvalueparaflag = false
+							celldatevalueparaflag = false
 							celltypeparaflag = false
 							column_repeatvalue = 1
 							row_repeatvalue = 1
