@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./ReadOdsFile"
+	"github.com/LIJUCHACKO/ods2csv"
 	"os"
 	"bufio"
 	"fmt"
